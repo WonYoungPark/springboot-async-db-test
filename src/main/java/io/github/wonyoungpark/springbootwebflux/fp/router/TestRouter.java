@@ -18,8 +18,8 @@ public class TestRouter {
 
     @Bean
     public RouterFunction<?> testRouterFunction() {
-        return RouterFunctions.route(GET("/test"), testHandler::blocking);
-//                           .andRoute(GET("/test2"), testHandler::nonBlocking);
+        return RouterFunctions.route(GET("/test"), testHandler::blocking)
+                           .andRoute(GET("/test/nonBlocking"), testHandler::nonBlocking);
                            //.andRoute(GET("/test2"), request -> ServerResponse.ok().body(testHandler.nonBlocking(), User.class));
     }
 }

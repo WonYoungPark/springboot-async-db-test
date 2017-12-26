@@ -61,6 +61,10 @@ public class TestHandler {
         return ServerResponse.ok().syncBody(fromObject("111"));
     }
 
+    public Mono<ServerResponse> nonBlocking(ServerRequest request) {
+        return ServerResponse.ok().syncBody(fromObject("111"));
+    }
+
 //    private <T> Mono<T> async(Callable<T> callable) {
 //        return Mono.fromCallable(callable).publishOn(scheduler);
 //    }

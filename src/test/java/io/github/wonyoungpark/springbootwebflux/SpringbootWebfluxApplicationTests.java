@@ -1,13 +1,17 @@
 package io.github.wonyoungpark.springbootwebflux;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.core.annotation.Order;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.StopWatch;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.PostConstruct;
 import java.time.Duration;
@@ -20,12 +24,22 @@ import java.util.concurrent.*;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 public class SpringbootWebfluxApplicationTests {
-    private final static int MAX_COUNT = 20;
+    private final static int MAX_COUNT = 10;
 
-	@Autowired
+    @LocalServerPort
+    private int port;
+
+    private WebClient webClient;
+
+    @Autowired
 	private WebTestClient webTestClient;
 
 	private ExecutorService executorService = Executors.newFixedThreadPool(MAX_COUNT);
+
+	@Before
+    public void setUp() {
+	    webClient = WebClient.builder().baseUrl("http://localhost:" + port).build();
+    }
 
 //	@Test
 //	public void contextLoads() {
@@ -39,30 +53,40 @@ public class SpringbootWebfluxApplicationTests {
 //    }
 
 	@Test
-	public void 부하_테스트() throws InterruptedException {
-        요청(MAX_COUNT);
+	public void 부하_테스트_블록킹() throws InterruptedException {
+        요청("/test", MAX_COUNT);
+    }
+
+    @Test
+	public void 부하_테스트_넌블록킹() throws InterruptedException {
+        요청("/test/nonBlocking", MAX_COUNT);
     }
 
     @Test
     public void 단일_테스트() throws InterruptedException {
-        요청(1);
+        요청("/test", 1);
     }
 
-    private void 요청(int count) throws InterruptedException {
+    private void 요청(String uri, int count) throws InterruptedException {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         log.info("테스트 시작");
 
         for (int i = 1; i <= count; i++) {
             executorService.execute(() -> {
-                webTestClient.get()
-                        .uri("/test")
+                webClient.get()
+                        .uri(uri)
                         .exchange()
-                        .expectStatus().isOk()
-                        .expectBody()
-                        .consumeWith((str) -> {
-                            //log.info(str.toString());
-                        });
+                        .log().subscribe()
+                        ;
+//                webTestClient.get()
+//                        .uri(uri)
+//                        .exchange()
+//                        .expectStatus().isOk()
+//                        .expectBody()
+//                        .consumeWith((str) -> {
+//                            log.info(str.toString());
+//                        });
             });
         }
 
