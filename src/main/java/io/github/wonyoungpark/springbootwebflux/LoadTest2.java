@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
-public class LoadTest {
+public class LoadTest2 {
     private final static int MAX_COUNT = 1;
 
     private static int port = 8080;

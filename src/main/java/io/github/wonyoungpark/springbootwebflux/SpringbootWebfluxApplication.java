@@ -1,13 +1,12 @@
 package io.github.wonyoungpark.springbootwebflux;
 
 import io.github.wonyoungpark.springbootwebflux.domain.User;
-import io.github.wonyoungpark.springbootwebflux.repository.ExampleRepository;
+import io.github.wonyoungpark.springbootwebflux.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.ArrayList;
@@ -18,23 +17,26 @@ import java.util.List;
 @EnableAsync
 public class SpringbootWebfluxApplication {
 	@Autowired
-	private ExampleRepository exampleRepository;
+	private UserRepository userRepository;
 
 	public static void main(String[] args) {
+		System.setProperty("reactor.ipc.netty.workerCount", "2");
+		System.setProperty("reactor.ipc.netty.pool.maxConnections", "2000");
+
 		SpringApplication.run(SpringbootWebfluxApplication.class, args);
 	}
 
-	@Bean
+	//@Bean
 	public CommandLineRunner demoData() {
 		return (str) -> {
 			List<User> users = new ArrayList<>();
 			for (int index = 1; index <= 1000; index++) {
 				User user = new User();
-				user.setName("이름 - " + index);
+				user.setName("Name - " + index);
 				users.add(user);
 			}
 
-			exampleRepository.saveAll(users);
+			userRepository.saveAll(users);
 		};
 	}
 }

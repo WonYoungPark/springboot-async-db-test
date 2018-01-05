@@ -2,8 +2,10 @@ package io.github.wonyoungpark.springbootwebflux;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -20,14 +22,14 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.concurrent.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+//@RunWith(SpringRunner.class)
+//@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+//@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Slf4j
 public class SpringbootWebfluxApplicationTests {
-    private final static int MAX_COUNT = 10;
+    private final static int MAX_COUNT = 20;
 
-    @LocalServerPort
-    private int port;
+    private int port = 8080;
 
     private WebClient webClient;
 
@@ -77,7 +79,7 @@ public class SpringbootWebfluxApplicationTests {
                 webClient.get()
                         .uri(uri)
                         .exchange()
-                        .log().subscribe()
+                        .log()
                         ;
 //                webTestClient.get()
 //                        .uri(uri)
@@ -85,8 +87,9 @@ public class SpringbootWebfluxApplicationTests {
 //                        .expectStatus().isOk()
 //                        .expectBody()
 //                        .consumeWith((str) -> {
-//                            log.info(str.toString());
-//                        });
+//                            //log.info(str.toString());
+//                        })
+//                        ;
             });
         }
 
